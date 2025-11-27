@@ -3,7 +3,6 @@
 A modular, scalable framework that integrates Graph Neural Networks (GNNs) with classical Optimal Power Flow (OPF) solvers to enable fast, physics-aware, constraint-compliant power grid optimization.  
 This repository also includes an optional PPO-based reinforcement learning module for dynamic grid control.
 
----
 
 ## Key Features
 
@@ -30,76 +29,94 @@ This repository also includes an optional PPO-based reinforcement learning modul
 
 ---
 
-##  Project Structure
-
-project/
-│
-├── src/
-│ ├── data/
-│ │ ├── dataset_loader.py # Load OPF datasets, Grid2Op data
-│ │ ├── preprocess.py # Cleaning, normalization
-│ │ └── graph_builder.py # Build graph: nodes, edges, features
-│ │
-│ ├── models/
-│ │ ├── gcn.py # Graph Convolutional Network
-│ │ ├── graphsage.py # GraphSAGE (inductive)
-│ │ ├── gat.py # Graph Attention Network
-│ │ └── hybrid_solver.py # GNN→OPF integration logic
-│ │
-│ ├── rl/
-│ │ ├── ppo_agent.py # PPO implementation
-│ │ └── environment.py # Grid2Op environment wrapper
-│ │
-│ ├── solvers/
-│ │ ├── opf_solver.py # AC-OPF solver (PYPOWER)
-│ │ └── warmstart.py # GNN → solver warm-start utilities
-│ │
-│ ├── utils/
-│ │ ├── metrics.py # MAE, MAPE, runtime metrics
-│ │ ├── visualization.py # Plots and analysis
-│ │ ├── config.py # Centralized hyperparameters
-│ │ └── logger.py # Logging and experiment tracking
-│ │
-│ └── main.py # Entrypoint for training & evaluation
-│
-├── notebooks/
-│ └── power_grid_v7.ipynb # Original exploratory notebook
-│
-├── experiments/
-│ ├── logs/ # Training & solver logs
-│ ├── results/ # Plots, tables, evaluation data
-│ └── checkpoints/ # Saved GNN/RL model weights
-│
-├── data/
-│ ├── raw/ # PGLib, Grid2Op raw data
-│ ├── processed/ # Saved processed tensors
-│ └── synthetic/ # Optional synthetic networks
-│
-├── tests/
-│ ├── test_gnn.py
-│ ├── test_opf.py
-│ ├── test_rl.py
-│ └── test_utils.py
-│
-├── requirements.txt
-├── README.md
-└── LICENSE
-
-
----
-
-## ⚙️ Installation
+## Installation
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/<your-username>/<repo-name>.git
-cd <repo-name>
+git clone https://github.com/Lalithkarthik/power-grid-gnn-hybrid.git
+cd power-grid-gnn-hybrid
 ```
 
-### 1. Install dependencies
+### 2. Install dependencies
 ```bash
 pip install -r requirements.txt
 ```
+
+### 3. Train GNN Models
+Train a specific GNN:
+```bash
+python src/main.py --train-gnn --model gcn
+python src/main.py --train-gnn --model graphsage
+python src/main.py --train-gnn --model gat
+```
+Training outputs include:
+1. Loss curves
+2. MAE & MAPE metrics
+Saved weights in experiments/checkpoints/
+
+### 4. Run the hybrid GNN-OPF solvers
+```bash
+python src/main.py --run-hybrid --model gat
+```
+This will:
+1. Load the trained GNN
+2. Predict near-optimal OPF variables
+3. Warm-start the AC-OPF solver
+4. Output feasibility metrics and runtime
+5. Save results to experiments/results/
+
+### 5. Train the PPO RL Agent
+```bash
+python src/main.py --train-rl
+```
+This launches:
+1. Grid2Op simulation
+2. PPO training loop
+3. Epioodic reward tracking
+4. Model checkpoints
+
+### 6. Dataset Setup
+Place all raw datasets (PGLib OPF, Grid2Op, etc.) inside:
+```bash
+data/raw/
+```
+After running preprocessing:
+```bash
+data/processed/
+```
+will contain graph tensors, feature matrices, and normalized values.
+
+### 7. Evaluation
+Evaluation includes:
+1. Prediction Accuracy
+- MAE, MAPE for voltages & dispatch
+2. Hybrid Solver Metrics
+- Runtime
+- Solver iteration count
+- Constraint violations
+3. Scaling Tests
+- Runtime vs bus count
+- GNN generalization
+
+### 8. Testing
+Run all unit tests:
+```bash
+python tests/
+```
+
+### 9. Configuration
+All hyperparameters are stored inside:
+```bash
+src/utils/config.py
+```
+This includes:
+1. Learning rates
+2. Hidden dimensions
+3. Number of GNN layers
+4. PPO settings
+5. File paths
+
+
 
 
 
