@@ -2,7 +2,6 @@
 
 This repository implements a hybrid intelligence system that combines Graph Neural Networks (GNNs) with classical Optimal Power Flow (OPF) solvers. The goal is to achieve fast, physics-aware power grid optimization while maintaining feasibility and scalability across different grid sizes.
 
---
 
 ##  Features
 
@@ -16,5 +15,4 @@ This repository implements a hybrid intelligence system that combines Graph Neur
 5. Modular, extensible codebase  
 6. Scalable from small to large IEEE bus systems
 
---
 
